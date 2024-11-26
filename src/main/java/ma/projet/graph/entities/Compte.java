@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,6 +16,7 @@ public class Compte {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private double solde;
 
     @Temporal(TemporalType.DATE)
@@ -22,4 +24,7 @@ public class Compte {
 
     @Enumerated(EnumType.STRING)
     private TypeCompte type;
+
+    @OneToMany(mappedBy = "compte", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions; // Associated transactions
 }

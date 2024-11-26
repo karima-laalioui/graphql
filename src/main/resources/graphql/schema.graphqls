@@ -1,4 +1,3 @@
-# Définition du schéma GraphQL
 enum TypeCompte {
     COURANT
     EPARGNE
@@ -6,8 +5,9 @@ enum TypeCompte {
 
 type Query {
     allComptes: [Compte]
-    compteById(id : ID):Compte
+    compteById(id: ID): Compte
     totalSolde: SoldeStats
+    comptesByType(type: TypeCompte!): [Compte] # Comptes filtrés par type
 }
 
 type Compte {
@@ -18,7 +18,8 @@ type Compte {
 }
 
 type Mutation {
-    saveCompte(compte:CompteRequest):Compte
+    saveCompte(compte: CompteRequest): Compte
+    deleteCompte(id: ID!): String # Suppression d'un compte existant
 }
 
 input CompteRequest {
@@ -27,10 +28,29 @@ input CompteRequest {
     type: TypeCompte
 }
 
-
-# Définition du type SoldeStats
 type SoldeStats {
     count: Int    # Nombre total de comptes
     sum: Float    # Somme des soldes
     average: Float # Moyenne des soldes
+}
+
+type Transaction {
+    id: ID
+    montant: Float
+    date: String
+    description: String
+    compte: Compte
+}
+
+input TransactionRequest {
+    montant: Float
+    description: String
+}
+
+extend type Query {
+    transactionsByCompteId(compteId: ID!): [Transaction] # Retrieve transactions for a specific account
+}
+
+extend type Mutation {
+    addTransaction(compteId: ID!, request: TransactionRequest!): Transaction # Add a transaction to an account
 }
